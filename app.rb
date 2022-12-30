@@ -70,10 +70,8 @@ class App < Sinatra::Base
             response = client.get_message_content(message_id)
             tf = Tempfile.open("content")
             tf.write(response.body)
-            p ">>>>>"
-            p response.body.to_s
-            p "<<<<<"
-            image = Base64.strict_encode64(response.body.to_s)
+
+            image = Base64.strict_encode64(response.body)
             message = create_tshirts(image, "無題")
   
             reply_text(event, message.to_s)
