@@ -57,7 +57,11 @@ class App < Sinatra::Base
     json = JSON.parse(res.body)
     json["products"][0]["sampleImageUrl"]
   end
-  
+
+  get '/ping' do
+    "pong"
+  end
+
   get '/make' do
     body = 'https://s.gravatar.com/avatar/ecb04fa16f05ea11109632c00405fdbb'
     message = create_tshirts(body, "無題")
