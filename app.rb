@@ -1,5 +1,7 @@
 require 'bundler/setup'
+require 'line/bot'
 require 'sinatra'
+require 'dotenv'
 Dotenv.load 
 
 
@@ -23,18 +25,18 @@ class App < Sinatra::Base
     events = client.parse_events_from(body)
   
     events.each do |event|
-        case event
-        when Line::Bot::Event::Message
-            case event.type
-            when Line::Bot::Event::MessageType::Text
+      case event
+      when Line::Bot::Event::Message
+        case event.type
+          when Line::Bot::Event::MessageType::Text
             message = {
-                type: 'text',
-                text: event.message['text']
+              type: 'text',
+              text: event.message['text']
             }
             client.reply_message(event['replyToken'], message)
-            end
+          end
         end
-    end
-  
+      end
     "OK"
+  end
 end
