@@ -58,11 +58,11 @@ class App < Sinatra::Base
             tf = Tempfile.open("content")
             tf.write(response.body)
             p message_id
-            p response
+            p response.body
 
             message = create_tshirts(response.body, "無題")
   
-            reply_text(event, message)
+            reply_text(event, message.to_s)
           end
         end
       end
