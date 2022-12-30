@@ -23,10 +23,25 @@ class App < Sinatra::Base
     )
   end
 
+  def reply_image(event, url)
+    client.reply_message(
+      event['replyToken'],
+      [
+        {
+          type: "image",
+          originalContentUrl: url,
+          previewImageUrl: url
+        },
+        {type: "text", text: '写真からTシャツを作ったよ'}
+      ]
+    )
+  end
+
   def bin2base64 (bin)
     "data:#{content_type};base64,#{Base64.encode64(bin)}"
   end
-  def create_tshirts(texture, title)
+
+  def create_tshirts_image(texture, title)
     access_token = ENV['SUZURI_API_KEY']
     url = URI.parse('https://suzuri.jp/api/v1/materials')
     http = Net::HTTP.new(url.host, url.port)
@@ -34,20 +49,16 @@ class App < Sinatra::Base
 
     req = Net::HTTP::Post.new(url.path)
     req["Authorization"] = "Bearer #{access_token}"
-    req.body = {texture: texture, title: '無題'}.to_json
+    req.body = {texture: texture, title: '無題', products: [{itemId: 1, published: true, resizeMode: 'contain'}]}.to_json
     req.content_type = "application/json"
 
     res = http.request(req)
 
-    case res
-    when Net::HTTPSuccess
-      res.body.to_s
-    else
-      res.body.to_s
-    end
+    json = JSON.parse(res.body)
+    json["products"][0]["sampleImageUrl"]
   end
   
-  get '/test' do
+  get '/make' do
     body = 'https://s.gravatar.com/avatar/ecb04fa16f05ea11109632c00405fdbb'
     message = create_tshirts(body, "無題")
   
@@ -73,10 +84,9 @@ class App < Sinatra::Base
             response = client.get_message_content(message_id)
 
             image = bin2base64(response.body)
-            puts image
-            message = create_tshirts(image, "無題")
-            puts message
-            reply_text(event, message.to_s)
+            image_url= create_tshirts_image(image, "無題")
+        
+            reply_image(event,image_url)
           end
         end
       end
