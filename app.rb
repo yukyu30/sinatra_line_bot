@@ -26,16 +26,28 @@ class App < Sinatra::Base
     access_token = ENV['SUZURI_API_KEY']
     url = URI.parse('https://suzuri.jp/api/v1/materials')
     http = Net::HTTP.new(url.host, url.port)
+    http.use_ssl = url.scheme === "https"
+
     req = Net::HTTP::Post.new(url.path)
-    req.set_form_data(uri, 'texture': texture, 'title': title)
-    req.add_field('Authorization', "Bearer #{access_token}")
+    req["Authorization"] = "Bearer #{access_token}"
+    req.body = {texture: texture, title: '無題'}.to_json
+    req.content_type = "application/json"
+
     res = http.request(req)
+
     case res
     when Net::HTTPSuccess
       res.body.to_s
     else
-      res.code.to_s
+      res.body.to_s
     end
+  end
+  
+  get '/test' do
+    body = 'https://s.gravatar.com/avatar/ecb04fa16f05ea11109632c00405fdbb'
+    message = create_tshirts(body, "無題")
+  
+    message.to_s
   end
 
   post '/callback' do
@@ -57,9 +69,9 @@ class App < Sinatra::Base
             response = client.get_message_content(message_id)
             tf = Tempfile.open("content")
             tf.write(response.body)
-            p message_id
-            p response.body
-
+            p ">>>>>"
+            p response.body.to_s
+            p "<<<<<"
             message = create_tshirts(response.body, "無題")
   
             reply_text(event, message.to_s)
