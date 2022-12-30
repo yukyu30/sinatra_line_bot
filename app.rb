@@ -43,11 +43,8 @@ class App < Sinatra::Base
             tf.write(response.body)
             p message_id
             p response
-            message = {
-              type: "text",
-              text: ""
-            }
-            reply_text(event, "[MessageType::IMAGE]\nid:#{message_id}\nreceived #{tf.size} bytes data")
+  
+            reply_text(event, response)
           end
         end
       end
