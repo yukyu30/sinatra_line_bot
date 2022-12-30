@@ -2,6 +2,7 @@ require 'bundler/setup'
 require 'line/bot'
 require 'sinatra'
 require 'dotenv'
+require 'base64'
 Dotenv.load 
 
 
@@ -72,7 +73,8 @@ class App < Sinatra::Base
             p ">>>>>"
             p response.body.to_s
             p "<<<<<"
-            message = create_tshirts(response.body, "無題")
+            image = Base64.strict_encode64(response.body.to_s)
+            message = create_tshirts(image, "無題")
   
             reply_text(event, message.to_s)
           end
