@@ -22,6 +22,22 @@ class App < Sinatra::Base
     )
   end
 
+  def create_tshirts(texture, title)
+    access_token = ENV['SUZURI_API_KEY']
+    url = URI.parse('https://suzuri.jp/api/v1/materials')
+    http = Net::HTTP.new(url.host, url.port)
+    req = Net::HTTP::Post.new(url.path)
+    req.set_form_data(uri, 'texture': texture, 'title': title)
+    req.add_field('Authorization', "Bearer #{access_token}")
+    res = http.request(req)
+    case res
+    when Net::HTTPSuccess
+      res.body.to_s
+    else
+      res.code.to_s
+    end
+  end
+
   post '/callback' do
     body = request.body.read
   
@@ -43,8 +59,10 @@ class App < Sinatra::Base
             tf.write(response.body)
             p message_id
             p response
+
+            create_tshirts(response.body, "無題")
   
-            reply_text(event, response)
+            reply_text(event, "画像が送信されてたね")
           end
         end
       end
