@@ -33,8 +33,9 @@ class App < Sinatra::Base
             response = client.get_message_content(message_id)
             tf = Tempfile.open("content")
             tf.write(response.body)
-
-            client.reply_message(event['replyToken'], "[MessageType::IMAGE]\nid:#{message_id}\nreceived #{tf.size} bytes data")
+            p message_id
+            p response
+            client.reply_message(event['replyToken'], message_id)
           end
         end
       end
