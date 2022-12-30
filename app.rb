@@ -29,11 +29,12 @@ class App < Sinatra::Base
       when Line::Bot::Event::Message
         case event.type
           when Line::Bot::Event::MessageType::Image
-            message = {
-              type: 'text',
-              text: '画像を送信を検知しました'
-            }
-            client.reply_message(event['replyToken'], message)
+            message_id = event.message['id']
+            response = client.get_message_content(message_id)
+            tf = Tempfile.open("content")
+            tf.write(response.body)
+
+            client.reply_message(event['replyToken'], response)
           end
         end
       end
