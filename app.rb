@@ -14,6 +14,14 @@ class App < Sinatra::Base
     }
   end
 
+  def reply_text(event, texts)
+    texts = [texts] if texts.is_a?(String)
+    client.reply_message(
+      event['replyToken'],
+      texts.map { |text| {type: 'text', text: text} }
+    )
+  end
+
   post '/callback' do
     body = request.body.read
   
@@ -35,7 +43,11 @@ class App < Sinatra::Base
             tf.write(response.body)
             p message_id
             p response
-            client.reply_message(event['replyToken'], message_id)
+            message = {
+              type: "text",
+              text: ""
+            }
+            reply_text(event, "[MessageType::IMAGE]\nid:#{message_id}\nreceived #{tf.size} bytes data")
           end
         end
       end
