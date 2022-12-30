@@ -28,10 +28,10 @@ class App < Sinatra::Base
       case event
       when Line::Bot::Event::Message
         case event.type
-          when Line::Bot::Event::MessageType::Text
+          when Line::Bot::Event::MessageType::Image
             message = {
               type: 'text',
-              text: event.message['text']
+              text: '画像を送信を検知しました'
             }
             client.reply_message(event['replyToken'], message)
           end
