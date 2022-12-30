@@ -49,7 +49,7 @@ class App < Sinatra::Base
 
     req = Net::HTTP::Post.new(url.path)
     req["Authorization"] = "Bearer #{access_token}"
-    req.body = {texture: texture, title: '無題', products: [{itemId: 1, published: true, resizeMode: 'contain'}]}.to_json
+    req.body = {texture: texture, title: '無題', products: [{itemId: 1, published: false, resizeMode: 'contain'}]}.to_json
     req.content_type = "application/json"
 
     res = http.request(req)
