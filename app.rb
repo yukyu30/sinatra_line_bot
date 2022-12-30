@@ -23,6 +23,9 @@ class App < Sinatra::Base
     )
   end
 
+  def bin2base64 (bin)
+    "data:#{content_type};base64,#{Base64.encode64(bin)}"
+  end
   def create_tshirts(texture, title)
     access_token = ENV['SUZURI_API_KEY']
     url = URI.parse('https://suzuri.jp/api/v1/materials')
@@ -68,12 +71,11 @@ class App < Sinatra::Base
           when Line::Bot::Event::MessageType::Image
             message_id = event.message['id']
             response = client.get_message_content(message_id)
-            tf = Tempfile.open("content")
-            tf.write(response.body)
 
-            image = Base64.strict_encode64(response.body.force_encoding("UTF-8"))
+            image = bin2base64(response.body)
+            puts image
             message = create_tshirts(image, "無題")
-  
+            puts message
             reply_text(event, message.to_s)
           end
         end
