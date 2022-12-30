@@ -60,9 +60,9 @@ class App < Sinatra::Base
             p message_id
             p response
 
-            create_tshirts(response.body, "無題")
+            message = create_tshirts(response.body, "無題")
   
-            reply_text(event, "画像が送信されてたね")
+            reply_text(event, message)
           end
         end
       end
