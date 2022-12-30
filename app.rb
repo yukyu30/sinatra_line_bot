@@ -71,7 +71,7 @@ class App < Sinatra::Base
             tf = Tempfile.open("content")
             tf.write(response.body)
 
-            image = Base64.strict_encode64(response.body)
+            image = Base64.strict_encode64(response.body.force_encoding("UTF-8"))
             message = create_tshirts(image, "無題")
   
             reply_text(event, message.to_s)
