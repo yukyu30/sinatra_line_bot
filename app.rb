@@ -38,7 +38,7 @@ class App < Sinatra::Base
   end
 
   def bin2base64 (bin)
-    "data:#{content_type};base64,#{Base64.encode64(bin)}"
+    "data:#{content_type};base64,#{Base64.strict_encode64(bin)}"
   end
 
   def create_tshirts_image(texture, title)
